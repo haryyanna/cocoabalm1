@@ -1,0 +1,999 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cocoa Balm - Lipstik Bahan Alami</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com/ ">
+    <link rel="preconnect" href="https://fonts.gstatic.com/ " crossorigin="">
+    <link href="./Natural Beauty - Lipstik Bahan Alami_files/css2" rel="stylesheet">
+    <link rel="stylesheet" href="./Natural Beauty - Lipstik Bahan Alami_files/style.css">
+    <style>
+        /* Modal Styles - Tambahan Baru */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 10000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            max-width: 600px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            transform: scale(0.9) translateY(20px);
+            transition: transform 0.3s ease;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: scale(1) translateY(0);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            transition: all 0.2s ease;
+        }
+
+        .modal-close:hover {
+            background: #f3f4f6;
+            transform: rotate(90deg);
+        }
+
+        .modal-product-header {
+            padding: 40px;
+            text-align: center;
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+            border-radius: 20px 20px 0 0;
+        }
+
+        .modal-product-header.cocoa-theme {
+            background: linear-gradient(135deg, #fef3e2 0%, #fde8cd 100%);
+        }
+
+        .modal-product-header.telang-theme {
+            background: linear-gradient(135deg, #eef2ff 0%, #e0e7ff 100%);
+        }
+
+        .modal-product-image {
+            width: 200px;
+            height: 200px;
+            margin: 0 auto 20px;
+            border-radius: 50%;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+            background: white;
+            padding: 20px;
+        }
+
+        .modal-product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .modal-product-title h2 {
+            font-size: 28px;
+            margin: 0 0 10px 0;
+            color: #1f2937;
+        }
+
+        .product-variant-badge {
+            display: inline-block;
+            padding: 6px 16px;
+            border-radius: 20px;
+            color: white;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .modal-product-description {
+            padding: 30px 40px;
+        }
+
+        .modal-product-description h4 {
+            color: #1f2937;
+            font-size: 18px;
+            margin: 25px 0 12px 0;
+            font-weight: 600;
+        }
+
+        .modal-product-description h4:first-child {
+            margin-top: 0;
+        }
+
+        .modal-product-description ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+
+        .modal-product-description li {
+            margin-bottom: 8px;
+            color: #4b5563;
+            line-height: 1.6;
+        }
+
+        .modal-product-description p {
+            color: #4b5563;
+            line-height: 1.7;
+            margin: 0;
+        }
+
+        .modal-product-actions {
+            padding: 0 40px 40px;
+            text-align: center;
+        }
+
+        .modal-order-btn {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 25px rgba(16, 185, 129, 0.3);
+        }
+
+        .modal-order-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 35px rgba(16, 185, 129, 0.4);
+        }
+
+        @media (max-width: 640px) {
+            .modal-product-header {
+                padding: 30px 20px;
+            }
+            
+            .modal-product-image {
+                width: 150px;
+                height: 150px;
+            }
+            
+            .modal-product-title h2 {
+                font-size: 24px;
+            }
+            
+            .modal-product-description,
+            .modal-product-actions {
+                padding: 25px 20px;
+            }
+        }
+        /* logo image styling (use your custom graphic by editing the src attributes above) */
+        .logo-icon img,
+        .footer-logo-icon img {
+            width: 24px;
+            height: 24px;
+            object-fit: contain;
+        }
+        /* popup icon centering */
+        .popup-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .popup-icon img {
+            display: block;
+            width: 32px;
+            height: 32px;
+            object-fit: contain;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav id="navbar" class="navbar">
+        <div class="nav-container">
+            <a href="https://xj5azdwirtjrm.ok.kimi.link/# " class="nav-logo">
+                <!-- replace src with your own logo file -->
+                <img class="logo-icon" src="logo.png" alt="Cocoa Balm logo" />
+                <div class="logo-text">
+                    <span class="logo-main">Cocoa Balm</span>
+                    <span class="logo-sub">Indonesia</span>
+                </div>
+            </a>
+
+
+            <a class="nav-cta" href="https://wa.me/62881038123939" target="_blank" rel="noopener">Pesan Sekarang</a>
+
+            <button class="mobile-menu-btn" id="mobileMenuBtn" onclick="toggleMobileMenu()">
+                <img id="menuIcon" src="logo.png" alt="Menu" width="24" height="24" />
+                <svg id="closeIcon" class="hidden" xmlns="http://www.w3.org/2000/svg " width="24" height="24"
+                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div class="mobile-menu" id="mobileMenu">
+            <a href="https://xj5azdwirtjrm.ok.kimi.link/# " class="mobile-link"
+                onclick="scrollToTop(); toggleMobileMenu()">Beranda</a>
+            <a href="https://xj5azdwirtjrm.ok.kimi.link/#products " class="mobile-link"
+                onclick="scrollToSection(&#39;products&#39;); toggleMobileMenu()">Produk</a>
+            <a href="https://xj5azdwirtjrm.ok.kimi.link/# " class="mobile-link"
+                onclick="showComingSoon(); toggleMobileMenu()">Tentang</a>
+            <a href="https://xj5azdwirtjrm.ok.kimi.link/#footer " class="mobile-link"
+                onclick="scrollToSection(&#39;footer&#39;); toggleMobileMenu()">Kontak</a>
+            <a class="nav-cta" href="https://wa.me/62881038123939" target="_blank" rel="noopener">Pesan Sekarang</a>
+        </div>
+    </nav>
+
+    <!-- Welcome Popup -->
+    <div class="popup-overlay" id="welcomePopup">
+        <div class="popup-content">
+            <button class="popup-close" onclick="closePopup()">
+                <svg xmlns="http://www.w3.org/2000/svg " width="24" height="24" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+
+            <div class="popup-header">
+                <div class="popup-icon-wrapper">
+                    <div class="popup-icon-glow"></div>
+                    <div class="popup-icon">
+                        <img src="logo.png" alt="Cocoa Balm Collection" width="32" height="32" />
+                    </div>
+                </div>
+                <h2 class="popup-title">Selamat Datang!</h2>
+                <p class="popup-subtitle">
+                    <svg xmlns="http://www.w3.org/2000/svg " width="16" height="16" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z">
+                        </path>
+                        <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"></path>
+                    </svg>
+                    Cocoa Balm Indonesia
+                    <svg xmlns="http://www.w3.org/2000/svg " width="16" height="16" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z">
+                        </path>
+                        <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"></path>
+                    </svg>
+                </p>
+                <p class="popup-description">Temukan keajaiban lipstik berbahan alami untuk bibir sehat dan cantik alami
+                    Anda.</p>
+            </div>
+
+            <div class="popup-features">
+                <div class="popup-feature">
+                    <div class="feature-icon green">
+                        <svg xmlns="http://www.w3.org/2000/svg " width="20" height="20" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z">
+                            </path>
+                            <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"></path>
+                        </svg>
+                    </div>
+                    <div class="feature-text">
+                        <p class="feature-title">100% Bahan Alami</p>
+                        <p class="feature-desc">Tanpa bahan kimia berbahaya</p>
+                    </div>
+                </div>
+                <div class="popup-feature">
+                    <div class="feature-icon blue">
+                        <svg xmlns="http://www.w3.org/2000/svg " width="20" height="20" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path
+                                d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z">
+                            </path>
+                        </svg>
+                    </div>
+                    <div class="feature-text">
+                        <p class="feature-title">Aman untuk Bibir</p>
+                        <p class="feature-desc">Diformulasikan dengan penuh kasih sayang</p>
+                    </div>
+                </div>
+            </div>
+
+            <button class="popup-btn" onclick="closePopup()">Mulai Eksplorasi</button>
+        </div>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="hero" id="hero">
+        <!-- Decorative Elements -->
+        <div class="hero-decoration">
+            <div class="floating-leaf leaf-1">
+                <svg xmlns="http://www.w3.org/2000/svg " width="80" height="80" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"></path>
+                    <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"></path>
+                </svg>
+            </div>
+            <div class="floating-leaf leaf-2">
+                <svg xmlns="http://www.w3.org/2000/svg " width="64" height="64" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"></path>
+                    <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"></path>
+                </svg>
+            </div>
+            <div class="floating-leaf leaf-3">
+                <svg xmlns="http://www.w3.org/2000/svg " width="56" height="56" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"></path>
+                    <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"></path>
+                </svg>
+            </div>
+            <div class="gradient-circle circle-1"></div>
+            <div class="gradient-circle circle-2"></div>
+            <div class="gradient-circle circle-3"></div>
+        </div>
+
+        <div class="hero-container">
+            <div class="hero-grid">
+                <!-- Left Content -->
+                <div class="hero-content">
+                    <div class="hero-badge reveal active">
+                        <svg xmlns="http://www.w3.org/2000/svg " width="16" height="16" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z">
+                            </path>
+                            <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"></path>
+                        </svg>
+                        <span>100% Bahan Alami</span>
+                    </div>
+
+                    <h1 class="hero-title reveal active">
+                        Selamat
+                        <span class="text-gradient">Datang</span>
+                    </h1>
+                    <p class="hero-subtitle reveal active">di Dunia Kecantikan Alami</p>
+
+                    <p class="hero-description reveal active">
+                        Temukan lipstik berbahan alami yang merawat bibir Anda dengan kekuatan alam.
+                        Diformulasikan dengan <span class="text-mint">Mint</span>,
+                        <span class="text-cocoa"> Cocoa</span>, dan
+                        <span class="text-telang"> Telang</span> untuk bibir sehat dan cantik.
+                    </p>
+
+                    <div class="hero-features reveal active">
+                        <div class="hero-feature">
+                            <svg xmlns="http://www.w3.org/2000/svg " width="16" height="16" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <path
+                                    d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z">
+                                </path>
+                            </svg>
+                            <span>Melembabkan</span>
+                        </div>
+                        <div class="hero-feature">
+                            <svg xmlns="http://www.w3.org/2000/svg " width="16" height="16" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <path
+                                    d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z">
+                                </path>
+                            </svg>
+                            <span>Aman Digunakan</span>
+                        </div>
+                        <div class="hero-feature">
+                            <svg xmlns="http://www.w3.org/2000/svg " width="16" height="16" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <path
+                                    d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z">
+                                </path>
+                                <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"></path>
+                            </svg>
+                            <span>Vegan Friendly</span>
+                        </div>
+                    </div>
+
+                    <button class="hero-cta reveal active" onclick="scrollToSection(&#39;products&#39;)">
+                        Lihat Produk Kami
+                        <svg xmlns="http://www.w3.org/2000/svg " width="20" height="20" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Right Content - Hero Image -->
+                <div class="hero-image-wrapper reveal active">
+                    <div class="hero-image-glow"></div>
+                    <div class="hero-image">
+                        <img src="produk.jpeg" alt="Cocoa Balm Collection">
+                        <div class="hero-image-overlay"></div>
+                    </div>
+
+                    <!-- Floating Badges -->
+                    <div class="floating-badge badge-organic">
+                        <div class="badge-icon green">
+                            <svg xmlns="http://www.w3.org/2000/svg " width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <path
+                                    d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z">
+                                </path>
+                                <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"></path>
+                            </svg>
+                        </div>
+                        <div class="badge-text">
+                            <p class="badge-title">Organik</p>
+                        </div>
+                    </div>
+
+                    <div class="floating-badge badge-customers">
+                        <div class="badge-icon blue">
+                            <svg xmlns="http://www.w3.org/2000/svg " width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <path
+                                    d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z">
+                                </path>
+                            </svg>
+                        </div>
+                        <div class="badge-text">
+                            <p class="badge-title">Produk Favorit</p>
+                            <p class="badge-sub">Sensasi sehat</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Scroll Indicator -->
+        <div class="scroll-indicator" onclick="scrollToSection(&#39;products&#39;)">
+            <svg xmlns="http://www.w3.org/2000/svg " width="20" height="20" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+        </div>
+    </section>
+
+    <!-- Products Section - REVISI -->
+    <section class="products" id="products">
+        <!-- Background decorations -->
+        <div class="products-decoration">
+            <div class="decor-circle circle-green"></div>
+            <div class="decor-circle circle-blue"></div>
+            <div class="decor-circle circle-brown"></div>
+        </div>
+
+        <div class="products-container">
+            <!-- Section Header -->
+            <div class="section-header">
+                <div class="section-badge reveal">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path
+                            d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z">
+                        </path>
+                    </svg>
+                    <span>Koleksi Produk Kami</span>
+                </div>
+
+                <h2 class="section-title reveal">Lipstik Berbahan Alami</h2>
+
+                <p class="section-description reveal">
+                    Tiga varian lipstik premium dengan bahan alami pilihan.
+                    Setiap varian dirancang khusus untuk memberikan perawatan terbaik bagi bibir Anda.
+                </p>
+            </div>
+
+            <!-- Products Grid -->
+            <div class="products-grid">
+                <!-- Product 1: Mint -->
+                <div class="product-card reveal" data-product="mint">
+                    <div class="product-card-inner">
+                        <div class="product-badge mint">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <path
+                                    d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z">
+                                </path>
+                                <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"></path>
+                            </svg>
+                            <span>Mint</span>
+                        </div>
+
+                        <div class="product-image-wrapper">
+                            <div class="product-image-glow mint"></div>
+                            <div class="product-image">
+                                <img src="mint.png" alt="Mint Fresh Lipstik">
+                            </div>
+                        </div>
+
+                        <div class="product-info">
+                            <h3 class="product-name">Mint Fresh</h3>
+                            <p class="product-description">Sensasi segar mint untuk bibir yang lembap dan sehat</p>
+
+                            <div class="product-benefits">
+                                <span class="benefit-tag">Sensasi segar</span>
+                                <span class="benefit-tag">Melembabkan</span>
+                                <span class="benefit-tag">Menenangkan bibir</span>
+                            </div>
+                            
+                            <!-- Deskripsi lengkap disimpan dalam data attribute -->
+                            <div class="full-desc" style="display:none;" data-full-desc>
+                                <h4>Manfaat Mint Fresh:</h4>
+                                <ul>
+                                    <li>Mengandung ekstrak mint alami yang memberikan sensasi segar</li>
+                                    <li>Melembabkan bibir kering dan pecah-pecah</li>
+                                    <li>Menenangkan iritasi pada bibir</li>
+                                    <li>Aroma mint yang menyegarkan</li>
+                                    <li>Bebas paraben dan bahan kimia berbahaya</li>
+                                </ul>
+                                <h4>Kandungan Utama:</h4>
+                                <p>Minyak mint, beeswax alami, vitamin E, dan ekstrak aloe vera.</p>
+                            </div>
+
+                            <button class="product-btn mint" onclick="openProductModal('mint')">
+                                Penjelasan Selengkapnya
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                                    <polyline points="12 5 19 12 12 19"></polyline>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product 2: Cocoa -->
+                <div class="product-card reveal" data-product="cocoa">
+                    <div class="product-card-inner">
+                        <div class="product-badge cocoa">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <path
+                                    d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z">
+                                </path>
+                            </svg>
+                            <span>Cocoa</span>
+                        </div>
+
+                        <div class="product-image-wrapper">
+                            <div class="product-image-glow cocoa"></div>
+                            <div class="product-image">
+                                <img src="cocoa.png" alt="Cocoa Rich Lipstik">
+                            </div>
+                        </div>
+
+                        <div class="product-info">
+                            <h3 class="product-name">Cocoa Rich</h3>
+                            <p class="product-description">Warna coklat natural kaya antioksidan</p>
+
+                            <div class="product-benefits">
+                                <span class="benefit-tag">Warna natural</span>
+                                <span class="benefit-tag">Rich antioxidant</span>
+                                <span class="benefit-tag">Tekstur creamy</span>
+                            </div>
+                            
+                            <!-- Deskripsi lengkap disimpan dalam data attribute -->
+                            <div class="full-desc" style="display:none;" data-full-desc>
+                                <h4>Manfaat Cocoa Rich:</h4>
+                                <ul>
+                                    <li>Memberikan warna natural coklat yang elegan</li>
+                                    <li>Kaya akan antioksidan dari ekstrak kakao</li>
+                                    <li>Tekstur creamy yang lembut di bibir</li>
+                                    <li>Menutrisi bibir dengan vitamin E</li>
+                                    <li>Tahan lama hingga 8 jam</li>
+                                </ul>
+                                <h4>Kandungan Utama:</h4>
+                                <p>Ekstrak kakao murni, shea butter, minyak jojoba, dan vitamin E.</p>
+                            </div>
+
+                            <button class="product-btn cocoa" onclick="openProductModal('cocoa')">
+                                Penjelasan Selengkapnya
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                                    <polyline points="12 5 19 12 12 19"></polyline>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product 3: Telang -->
+                <div class="product-card reveal" data-product="telang">
+                    <div class="product-card-inner">
+                        <div class="product-badge telang">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <path
+                                    d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z">
+                                </path>
+                            </svg>
+                            <span>Telang</span>
+                        </div>
+
+                        <div class="product-image-wrapper">
+                            <div class="product-image-glow telang"></div>
+                            <div class="product-image">
+                                <img src="telang.png" alt="Telang Glow Lipstik">
+                            </div>
+                        </div>
+
+                        <div class="product-info">
+                            <h3 class="product-name">Telang Glow</h3>
+                            <p class="product-description">Warna pink natural yang mencerahkan</p>
+
+                            <div class="product-benefits">
+                                <span class="benefit-tag">Warna pink natural</span>
+                                <span class="benefit-tag">Mencerahkan</span>
+                                <span class="benefit-tag">Antioksidan tinggi</span>
+                            </div>
+                            
+                            <!-- Deskripsi lengkap disimpan dalam data attribute -->
+                            <div class="full-desc" style="display:none;" data-full-desc>
+                                <h4>Manfaat Telang Glow:</h4>
+                                <ul>
+                                    <li>Memberikan warna pink natural yang cantik</li>
+                                    <li>Mencerahkan warna bibir yang gelap</li>
+                                    <li>Kaya antioksidan dari bunga telang</li>
+                                    <li>Membuat bibir tampak lebih sehat dan berwarna</li>
+                                    <li>Cocok untuk semua skin tone</li>
+                                </ul>
+                                <h4>Kandungan Utama:</h4>
+                                <p>Ekstrak bunga telang (butterfly pea), minyak kelapa, beeswax, dan aloe vera.</p>
+                            </div>
+
+                            <button class="product-btn telang" onclick="openProductModal('telang')">
+                                Penjelasan Selengkapnya
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                                    <polyline points="12 5 19 12 12 19"></polyline>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+<script> window.chtlConfig = { chatbotId: "1341121844", display: "page_inline" } </script>
+<div id="chtl-inline-bot" style="width: 100%; height: 500px;"></div>
+<script async data-id="1341121844" data-display="page_inline" id="chtl-script" type="text/javascript" src="https://chatling.ai/js/embed.js"></script>
+            <!-- Bottom CTA -->
+            <div class="products-cta reveal">
+                <div class="cta-box">
+                    <div class="cta-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z">
+                            </path>
+                            <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"></path>
+                        </svg>
+                    </div>
+                    
+                    <div class="cta-text">
+                        <p class="cta-title">Ingin bertanya tentang khasiat produk??</p>
+                        <p class="cta-sub">Yukkk, tanya tanya di AI nya sekarang!!</p>
+                    </div>
+                    <a href="https://share.chatling.ai/s/yg66bhzF2CpsdR8" target="_blank" rel="noopener" class="cta-btn">
+                        Tanya AI
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                            <polyline points="12 5 19 12 12 19"></polyline>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer" id="footer">
+        <!-- Decorative elements -->
+        <div class="footer-decoration">
+            <div class="footer-circle circle-1"></div>
+            <div class="footer-circle circle-2"></div>
+        </div>
+
+        <div class="footer-main">
+            <div class="footer-container">
+                <div class="footer-grid">
+                    <!-- Brand Column -->
+                    <div class="footer-brand">
+                        <div class="footer-logo">
+                            <div class="footer-logo-icon">
+                                <!-- replace src with your own logo file -->
+                                <img src="logo.png" alt="Cocoa Balm logo" />
+                            </div>
+                            <div class="footer-logo-text">
+                                <h3>Cocoa Balm</h3>
+                                <p>Indonesia</p>
+                            </div>
+                        </div>
+                        <p class="footer-desc">
+                            Lipstik berbahan alami untuk bibir sehat dan cantik.
+                            Diformulasikan dengan cinta menggunakan bahan-bahan pilihan dari alam.
+                        </p>
+                    
+                        </div>
+                    </div>
+
+            
+
+                    
+
+                    <!-- Contact -->
+                    <div class="footer-contact">
+                        <h4 class="footer-title">
+                            <span class="title-line"></span>
+                            Hubungi Kami
+                        </h4>
+                        <ul class="contact-list">
+                            <li>
+                                <a href="tel:+6281234567890" class="contact-item">
+                                    <div class="contact-icon">
+                                        <svg xmlns="http://www.w3.org/2000/svg " width="20" height="20"
+                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                            stroke-linecap="round" stroke-linejoin="round">
+                                            <path
+                                                d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z">
+                                            </path>
+                                        </svg>
+                                    </div>
+                                    <div class="contact-text">
+                                        <p class="contact-label">Telepon</p>
+                                        <p class="contact-value">+62 821-4464-8307 (Claudya) </p>
+                                    </div>
+                                </a>
+                            </li>
+                            <li>
+                
+                                        </svg>
+                                    </div>
+                                </a>
+                            </li>
+                            <li>
+                                <div class="contact-item">
+                                    <div class="contact-icon">
+                                        <svg xmlns="http://www.w3.org/2000/svg " width="20" height="20"
+                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                            stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"></path>
+                                            <circle cx="12" cy="10" r="3"></circle>
+                                        </svg>
+                                    </div>
+                                    <div class="contact-text">
+                                        <p class="contact-label">Alamat</p>
+                                        <p class="contact-value">Kec. Blahbatuh, Gianyar, Bali</p>
+                                    </div>
+                                </div>
+                            </li>
+                            <li>
+                                <a href="https://instagram.com/naturalbeauty.id " target="_blank" class="contact-item">
+                                    <div class="contact-icon instagram-gradient">
+                                        <svg xmlns="http://www.w3.org/2000/svg " width="20" height="20"
+                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                            stroke-linecap="round" stroke-linejoin="round">
+                                            <rect width="20" height="20" x="2" y="2" rx="5" ry="5"></rect>
+                                            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                                            <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+                                        </svg>
+                                    </div>
+                                    <div class="contact-text">
+                                        <p class="contact-label">Instagram</p>
+                                        <p class="contact-value">@-</p>
+                                    </div>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Bar -->
+        <div class="footer-bottom">
+            <div class="footer-container">
+                <div class="footer-bottom-content">
+                    <p class="copyright">
+                        © 2026 Cocoa Balm Indonesia. Dibuat dengan
+                        <svg xmlns="http://www.w3.org/2000/svg " width="16" height="16" viewBox="0 0 24 24"
+                            fill="currentColor" stroke="none">
+                            <path
+                                d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z">
+                            </path>
+                        </svg>
+                        untuk kecantikan alami Anda.
+                    </p>
+
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Product Detail Modal - REVISI -->
+    <div class="modal-overlay" id="productModal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeProductModal()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+            <div class="modal-body" id="modalBody">
+                <!-- Content akan diisi oleh JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Coming Soon Toast -->
+    <div class="toast" id="toast">
+        <svg xmlns="http://www.w3.org/2000/svg " width="20" height="20" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8" x2="12" y2="12"></line>
+            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        </svg>
+        <span>Coming Soon!</span>
+    </div>
+
+    <!-- JavaScript untuk Modal Produk - REVISI -->
+    <script>
+        // Fungsi untuk membuka modal produk
+        function openProductModal(productKey) {
+            // Cari card produk berdasarkan data attribute
+            const productCard = document.querySelector(`.product-card[data-product="${productKey}"]`);
+            
+            if (!productCard) {
+                console.error('Produk tidak ditemukan:', productKey);
+                return;
+            }
+            
+            // Ambil data dari card
+            const productName = productCard.querySelector('.product-name').textContent;
+            const productImage = productCard.querySelector('.product-image img').src;
+            const productImageAlt = productCard.querySelector('.product-image img').alt;
+            const fullDescElement = productCard.querySelector('[data-full-desc]');
+            const fullDescription = fullDescElement ? fullDescElement.innerHTML : '<p>Deskripsi lengkap belum tersedia.</p>';
+            
+            // Tentukan warna tema berdasarkan produk
+            let themeColor = '';
+            let themeClass = '';
+            switch(productKey) {
+                case 'mint':
+                    themeColor = '#10b981';
+                    themeClass = 'mint-theme';
+                    break;
+                case 'cocoa':
+                    themeColor = '#8b5a2b';
+                    themeClass = 'cocoa-theme';
+                    break;
+                case 'telang':
+                    themeColor = '#6366f1';
+                    themeClass = 'telang-theme';
+                    break;
+            }
+            
+            // Buat konten modal
+            const modalContent = `
+                <div class="modal-product-header ${themeClass}">
+                    <div class="modal-product-image">
+                        <img src="${productImage}" alt="${productImageAlt}">
+                    </div>
+                    <div class="modal-product-title">
+                        <h2>${productName}</h2>
+                        <span class="product-variant-badge" style="background-color: ${themeColor}">${productKey.charAt(0).toUpperCase() + productKey.slice(1)}</span>
+                    </div>
+                </div>
+                <div class="modal-product-description">
+                    ${fullDescription}
+                </div>
+                <div class="modal-product-actions">
+                    <a href="https://wa.me/62881038123939" target="_blank" rel="noopener" class="modal-order-btn">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="9" cy="21" r="1"></circle>
+                            <circle cx="20" cy="21" r="1"></circle>
+                            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                        </svg>
+                        Pesan Sekarang
+                    </a>
+                </div>
+            `;
+            
+            // Masukkan konten ke modal body
+            const modalBody = document.getElementById('modalBody');
+            modalBody.innerHTML = modalContent;
+            
+            // Tampilkan modal
+            const modal = document.getElementById('productModal');
+            modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden'; // Mencegah scroll body
+            
+            // Animasi masuk
+            setTimeout(() => {
+                modal.classList.add('active');
+            }, 10);
+        }
+
+        // Fungsi untuk menutup modal produk
+        function closeProductModal() {
+            const modal = document.getElementById('productModal');
+            modal.classList.remove('active');
+            
+            // Tunggu animasi selesai baru sembunyikan
+            setTimeout(() => {
+                modal.style.display = 'none';
+                document.body.style.overflow = ''; // Kembalikan scroll body
+            }, 300);
+        }
+
+        // Tutup modal ketika klik di luar konten
+        document.getElementById('productModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeProductModal();
+            }
+        });
+
+        // Tutup modal dengan tombol ESC
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeProductModal();
+            }
+        });
+
+        // Fungsi lama untuk kompatibilitas footer links
+        function showProductDetail(key) {
+            openProductModal(key);
+        }
+        
+        function closeModal() {
+            closeProductModal();
+        }
+    </script>
+    
+    <script src="./Natural Beauty - Lipstik Bahan Alami_files/main.js.download"></script>
+
+            </svg>
+        </a>
+    </div>
+</body>
+
+</html>
